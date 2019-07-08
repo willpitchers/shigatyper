@@ -1,0 +1,12 @@
+MANIFEST.in
+README.md
+setup.py
+ShigaTyper.egg-info/PKG-INFO
+ShigaTyper.egg-info/SOURCES.txt
+ShigaTyper.egg-info/dependency_links.txt
+ShigaTyper.egg-info/entry_points.txt
+ShigaTyper.egg-info/requires.txt
+ShigaTyper.egg-info/top_level.txt
+shigatyper/__init__.py
+shigatyper/shigatyper.py
+shigatyper/resources/ShigellaRef5.fasta
