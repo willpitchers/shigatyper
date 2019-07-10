@@ -26,7 +26,6 @@ def spread_isolates( tab_file_name ):
     tab_file = open(tab).readlines()
     for line in tab_file:
         line_list = line.strip().split('\t')
-        print(line_list)
         isolate_file = isolate_path / f"{line_list[0]}.txt"
         isolate_file.write_text(line)
 
@@ -35,7 +34,10 @@ samples = [ line.strip() for line in open( pathlib.Path( "sample_names.list" )).
 
 rule all:
     input:
-        expand( 'isolates/{sample}.st', sample = samples )
+        expand( 'isolates/{sample}.st', sample = samples ),
+        "isolates/output.txt"
+
+#####
 
 rule prepare_input:
     input:
@@ -45,6 +47,7 @@ rule prepare_input:
     run:
         spread_isolates( "input.tab" )
 
+#####
 
 rule shiga_type:
     input:
@@ -53,17 +56,20 @@ rule shiga_type:
         expand( 'isolates/{sample}.st', sample = samples )
     shell:
         """
-        singularity run shigatyper.sif shigatype {input} > {output}
+        python3 shigatyper/shigatyper.py -n $( cat {input} ) > {output}
         """
 
+        # singularity run shigatyper.sif shigatype -n $( cat {input} ) > {output}
+#####
 
-
-rule test:
+rule combine_output:
     input:
-        "input.tab"
+        expand( 'isolates/{sample}.st', sample = samples )
     output:
-        "somefile.txt"
+        "isolates/output.txt"
     shell:
         """
-        echo x > somefile.txt
+        echo "sample\tprediction\tipaB" > {output}
+        tail -1 isolates/*st >> {output}
         """
+
