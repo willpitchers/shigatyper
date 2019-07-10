@@ -1,0 +1,41 @@
+Bootstrap: docker
+From: continuumio/miniconda3:4.5.12
+
+%help
+A Singularity image for shigatyper (https://github.com/CFSAN-Biostatistics/shigatyper)
+
+%labels
+Maintainer Will Pitchers
+Build 1.0
+shigatyper for shigella_typing
+
+%environment
+export VERSION=1.0
+export PATH=/opt/conda/bin:$PATH
+%post
+ # set versions of software to install
+  export PATH=/opt/conda/bin:$PATH
+  conda --version
+  conda config --add channels conda-forge
+  conda config --add channels defaults
+  conda config --add channels r
+  conda config --add channels bioconda
+
+# install shigatyper
+
+  pip3 install git+https://github.com/CFSAN-Biostatistics/shigatyper
+
+# get test files?
+#        curl -O https://raw.githubusercontent.com/ncbi/amr/v3b/test_dna.fa \
+#             -O https://raw.githubusercontent.com/ncbi/amr/v3b/test_prot.fa \
+#             -O https://raw.githubusercontent.com/ncbi/amr/v3b/test_prot.gff \
+#             -O https://raw.githubusercontent.com/ncbi/amr/v3b/test_both.expected \
+#             -O https://raw.githubusercontent.com/ncbi/amr/v3b/test_dna.expected \
+#             -O https://raw.githubusercontent.com/ncbi/amr/v3b/test_prot.expected
+
+
+  echo "Done"
+
+#%test
+#        amrfinder --plus -n test_dna.fa -O Campylobacter > test_dna.got
+#        diff test_dna.expected test_dna.got
