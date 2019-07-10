@@ -75,17 +75,7 @@ if (( read_path == "TRUE" )) ; then
 #     check_input_file
 fi
 
-
-
-
-
-
-
-
-
-
-
-
+cut -f 1 input.tab > sample_names.list
 
 
 ### Run the thing!

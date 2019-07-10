@@ -5,49 +5,65 @@ A Snakefile for running `shigatyper` and parsing the output for LIMS/MDDI
 
 import pandas as pd
 import numpy as np
+import glob, os, sys, pathlib
 
 
-
-# def get_fastq(wildcards):
-#     return {"r1": pathlib.Path(samples.loc[wildcards.sample,'R1']).absolute().as_posix(), "r2": pathlib.Path(samples.loc[wildcards.sample,'R2']).absolute().as_posix()}
+# def spread_isolates( tab_file_name ):
+#     os.mkdir( "isolates" )
+#     with open( tab_file_name, 'r' ) as tab_file:
+#         for line in tab_file:
+#             line_list = line.strip().split('\t')
+#             with open( "isolates/" + line_list[0] + ".txt", 'w' ) as isolate_file:
+#                 isolate_file.write( '\t'.join( line_list ))
+#                 isolate_file.close()
+#     tab_file.close()
 
 def spread_isolates( tab_file_name ):
-    with open( tab_file_name, 'r' ) as tab_file:
-        for line in tab_file:
-            line_list = line.strip().split('\t')
-            with open( line_list[0]+".txt", 'w' ) as isolate_file:
-                isolate_file.write( '\t'.join( line_list ))
-                isolate_file.close()
+    isolate_path = pathlib.Path('isolates')
+    if not isolate_path.exists():
+        isolate_path.mkdir()
+    tab = pathlib.Path(tab_file_name)
+    tab_file = open(tab).readlines()
+    for line in tab_file:
+        line_list = line.strip().split('\t')
+        print(line_list)
+        isolate_file = isolate_path / f"{line_list[0]}.txt"
+        isolate_file.write_text(line)
+
+samples = [ line.strip() for line in open( pathlib.Path( "sample_names.list" )).readlines() ] 
+
 
 rule all:
     input:
-        "output.txt"
- 
+        expand( 'isolates/{sample}.st', sample = samples )
 
 rule prepare_input:
     input:
         "input.tab"
     output:
-        ""
-    run: 
+        expand( 'isolates/{sample}.txt', sample = samples )
+    run:
+        spread_isolates( "input.tab" )
 
 
-rule shigatype:
+rule shiga_type:
+    input:
+        expand( 'isolates/{sample}.txt', sample = samples ) 
+    output:
+        expand( 'isolates/{sample}.st', sample = samples )
+    shell:
+        """
+        singularity run shigatyper.sif shigatype {input} > {output}
+        """
+
+
+
+rule test:
     input:
         "input.tab"
     output:
-        "output.txt"
+        "somefile.txt"
     shell:
-        " cat input.tab > while read i ; do python3 shigatyper/shigatyper.py ${i} ; > output.txt"
-    
-
-# rule srst2_aggregate:
-#     input:
-#         expand("{sample}/{sample}__genes__EcOH__results.txt", sample=samples.index)
-#     params:
-#         prefix="ecoh_summary"
-#     output:
-#         "ecoh_summary__compiledResults.txt"
-#     conda: config['srst2_config_file']
-#     shell:
-#         "aggregate_results.py {params.prefix} {input}"
+        """
+        echo x > somefile.txt
+        """
