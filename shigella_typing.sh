@@ -34,13 +34,13 @@ display_help() {
     echo "The What:"
 	  echo "	this tool assigns species and serotype ID to Illumina paired-end readsets for Shigella isolates"
     echo "The How:"
-    echo "	bash shigella_typing.sh [-h] [-n SAMPLE_NAME read1 read2] <input_file.tab>"
+    echo "	bash shigella_typing.sh [options] [-n SAMPLE_NAME read1 read2] <input_file.tab>"
     echo "			Input should be: Isolate-ID <tab> /path/to/read_1_file.fastq <tab> /path/to/read_2_file.fastq "
     echo "			(path can be skipped if using MDU IDs - see below)"
     echo "Options:"
     echo "   -h			show this help screen"
     echo "   -n			provide sample name followed by paths instead of an input file"
-    echo "   -m     provide an MDU ID to run a single sample (requires 'mdu-reads')"
+    echo "   -m			provide an MDU ID to run a single sample (requires 'mdu-reads')"
     echo "   -r			check that requirements are met"
     echo "   -v			verbose mode"
     echo
@@ -75,14 +75,17 @@ done
 
 if [ ${read_path} ] ; then
     echo -e ${2}'\t'${3}'\t'${4} > input.tab
-elif [ ${MDU_ID} ] ; then
+fi
+
+if [ ${MDU_ID} ] ; then
     mdu-reads ${2} > input.tab
 fi
 
+### make a list of sample names – duplicates will crash the Snakefile
 cut -f 1 input.tab > sample_names.list
 
+### here, the exit code returned from check_input.py determines whether to continue
 python3 check_input.py; ec=$?
-
 case $ec in
     0) ;;
     1) printf "\n Please check your <input.tab> file for duplicate samples.\n"; exit 1;;
@@ -90,5 +93,5 @@ case $ec in
 esac
 
 ### Run the thing!
-
 snakemake
+
