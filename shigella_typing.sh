@@ -75,10 +75,10 @@ done
 
 if [ ${read_path} ] ; then
     echo -e ${2}'\t'${3}'\t'${4} > input.tab
-fi
-
-if [ ${MDU_ID} ] ; then
+elif [ ${MDU_ID} ] ; then
     mdu-reads ${2} > input.tab
+else
+    check_input
 fi
 
 ### make a list of sample names – duplicates will crash the Snakefile

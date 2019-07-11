@@ -70,7 +70,19 @@ rule combine_output:
         "isolates/output.txt"
     shell:
         """
-        echo "sample\tprediction\tipaB" > {output}
         tail -1 {input} >> {output}
         """
 
+        # echo "sample\tprediction\tipaB" > {output}
+
+#####
+
+rule parse_output:
+    input:
+        "isolates/output.txt"
+    output:
+        "shigatype.tab"
+    shell:
+        """
+        bash parse_shigatype.sh
+        """

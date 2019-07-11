@@ -4,8 +4,7 @@ import pandas as pd
 import numpy as np
 import glob, os, sys, pathlib
 
-# this script simply checks for duplicate isolates in the <input.tab> file
-
+# this bit checks for duplicate isolates in the <input.tab> file :
 samples = [ line.strip() for line in open( pathlib.Path( "sample_names.list" )).readlines() ] 
 
 sample_dupes = [x for n, x in enumerate( samples ) if x in samples[:n]]
