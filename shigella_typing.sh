@@ -40,7 +40,7 @@ display_help() {
     echo "Options:"
     echo "   -h			show this help screen"
     echo "   -n			provide sample name followed by paths instead of an input file"
-    echo "   -m     provide an MDU ID to run a single sample (requires `mdu-reads`)"
+    echo "   -m     provide an MDU ID to run a single sample (requires 'mdu-reads')"
     echo "   -r			check that requirements are met"
     echo "   -v			verbose mode"
     echo
@@ -91,4 +91,4 @@ esac
 
 ### Run the thing!
 
-# snakemake
+snakemake
