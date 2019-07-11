@@ -93,4 +93,5 @@ case $ec in
 esac
 
 ### Run the thing!
-# snakemake
+snakemake
+
