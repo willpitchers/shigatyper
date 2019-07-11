@@ -71,6 +71,6 @@ rule combine_output:
     shell:
         """
         echo "sample\tprediction\tipaB" > {output}
-        tail -1 isolates/*st >> {output}
+        tail -1 {input} >> {output}
         """
 
