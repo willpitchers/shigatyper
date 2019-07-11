@@ -31,6 +31,7 @@ def spread_isolates( tab_file_name ):
 
 samples = [ line.strip() for line in open( pathlib.Path( "sample_names.list" )).readlines() ] 
 
+sample_dupes = [x for n, x in enumerate( samples ) if x in samples[:n]]
 
 rule all:
     input:
