@@ -29,7 +29,7 @@ SfDic = {"Shigella flexneri Yv": ["Xv"],
 
 shigatype_dataframe = pd.read_csv( "isolates/output.txt", sep="\t", header=None )
 
-pd.DataFrame.to_excel( "shigatypes.xlsx" )
+shigatype_dataframe.to_excel( "shigatypes.xlsx" )
 
 # "Not Shigella or EIEC"
 # "Shigella boydii serotype 13"

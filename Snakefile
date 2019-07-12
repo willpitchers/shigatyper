@@ -33,10 +33,14 @@ samples = [ line.strip() for line in open( pathlib.Path( "sample_names.list" )).
 
 sample_dupes = [x for n, x in enumerate( samples ) if x in samples[:n]]
 
+SINGULARITY = "singularity/shigatyper.sif"
+
+##### RULES:
+
 rule all:
     input:
         expand( 'isolates/{sample}.st', sample = samples ),
-        "isolates/output.txt"
+        "shigatypes.xlsx"
 
 #####
 
@@ -57,10 +61,9 @@ rule shiga_type:
         expand( 'isolates/{sample}.st', sample = samples )
     shell:
         """
-        python3 shigatyper/shigatyper.py -n $( cat {input} ) > {output}
+        singularity exec SINGULARITY shigatyper -n $( cat {input} ) > {output}
         """
 
-        # singularity run shigatyper.sif shigatype -n $( cat {input} ) > {output}
 #####
 
 rule combine_output:
@@ -81,8 +84,8 @@ rule parse_output:
     input:
         "isolates/output.txt"
     output:
-        "shigatype.tab"
+        "shigatypes.xlsx"
     shell:
         """
-        bash parse_shigatype.sh
+        python3 parse_shigatype.py
         """
